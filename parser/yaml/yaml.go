@@ -32,8 +32,8 @@ func (yp *Parser) Extensions() []string {
 
 // toObjectConfig maps the local configuration object to the
 // common Object's one.
-func toObjectConfig(in objectConfig) objects.ObjectConfig {
-	out := objects.ObjectConfig{
+func toObjectConfig(in objectConfig) objects.Config {
+	out := objects.Config{
 		Type: in.Type,
 		Position: objects.Point{
 			X: in.Position.X,
@@ -79,11 +79,6 @@ func (yp *Parser) Parse(filename string) (*scene.Config, error) {
 			X: conf.Eye.Position.X,
 			Y: conf.Eye.Position.Y,
 			Z: conf.Eye.Position.Z,
-		},
-		Rotation: objects.Vector{
-			X: conf.Eye.Rotation.X,
-			Y: conf.Eye.Rotation.Y,
-			Z: conf.Eye.Rotation.Z,
 		},
 	}
 	objs := []objects.Object{}

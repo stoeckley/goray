@@ -24,7 +24,6 @@ type Scene struct {
 // It is a point with a vector.
 type Eye struct {
 	Position objects.Point
-	Rotation objects.Vector
 }
 
 // Config represent the configuration for a Scene.
@@ -55,9 +54,9 @@ func (s *Scene) calc(x, y int, eye objects.Point, objs []objects.Object) color.C
 		k   float64     = -1
 		col color.Color = color.Black
 		v               = objects.Vector{
-			X: 100,
-			Y: float64(s.Width/2 - x),
-			Z: float64(s.Height/2 - y),
+			X: float64(1000 - eye.X),
+			Y: float64(s.Width/2 - x - eye.Y),
+			Z: float64(s.Height/2 - y - eye.Z),
 		}
 	)
 	for _, obj := range objs {
@@ -78,7 +77,6 @@ func (s *Scene) Compute(eye objects.Point, objs []objects.Object) {
 		x int
 		y int
 	)
-
 	for i, total := 0, s.Width*s.Height; i < total; i++ {
 		x = i % s.Width
 		y = i / s.Width

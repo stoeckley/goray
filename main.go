@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/creack/goray/cli"
-	_ "github.com/creack/goray/parser/all"
-	_ "github.com/creack/goray/render/all"
+	_ "github.com/creack/goray/parser/all" // Load all parsers
+	_ "github.com/creack/goray/render/all" // Load all Renderers
 	"github.com/creack/goray/scene"
 )
 

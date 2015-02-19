@@ -6,7 +6,7 @@ import (
 )
 
 // ObjectConfig represent an object configuraton.
-type ObjectConfig struct {
+type Config struct {
 	Type     string
 	Position Point
 	Rotation Vector
@@ -22,7 +22,7 @@ func RegisterObject(name string, f NewObjectFct) {
 }
 
 // NewObjectFct is a typedef on an Object constructor.
-type NewObjectFct func(ObjectConfig) (Object, error)
+type NewObjectFct func(Config) (Object, error)
 
 // ObjectList hold the available objects
 // (registered by underlying implementation)
@@ -60,6 +60,7 @@ type Vector struct {
 	Z float64
 }
 
+// String .
 func (v Vector) String() string {
 	return fmt.Sprintf("{%f, %f, %f}", v.X, v.Y, v.Z)
 }
@@ -68,5 +69,5 @@ func (v Vector) String() string {
 type Object interface {
 	Color() color.Color
 	Intersect(v Vector, eye Point) float64
-	Parse(values ObjectConfig) (Object, error)
+	Parse(values Config) (Object, error)
 }
