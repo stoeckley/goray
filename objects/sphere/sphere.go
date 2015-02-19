@@ -19,7 +19,7 @@ type Sphere struct {
 }
 
 // NewSphere instanciate the Sphere object.
-func NewSphere(obj objects.ObjectConfig) (objects.Object, error) {
+func NewSphere(obj objects.Config) (objects.Object, error) {
 	return (&Sphere{}).Parse(obj)
 }
 
@@ -30,7 +30,7 @@ func (s *Sphere) Color() color.Color {
 
 // Parse populates the Sphere's values from the given configuration object.
 // If the Sphere is nil, instantiate it.
-func (s *Sphere) Parse(obj objects.ObjectConfig) (objects.Object, error) {
+func (s *Sphere) Parse(obj objects.Config) (objects.Object, error) {
 	if s == nil {
 		s = &Sphere{}
 	}
@@ -45,7 +45,7 @@ func (s *Sphere) Intersect(v objects.Vector, eye objects.Point) float64 {
 
 	var (
 		a = v.X*v.X + v.Y*v.Y + v.Z*v.Z
-		b = 2*float64(eye.X)*v.X + float64(eye.Y)*v.Y + float64(eye.Z)*v.Z
+		b = 2 * (float64(eye.X)*v.X + float64(eye.Y)*v.Y + float64(eye.Z)*v.Z)
 		c = float64(eye.X*eye.X + eye.Y*eye.Y + eye.Z*eye.Z - s.R*s.R)
 	)
 	return utils.SecondDegree(a, b, c)

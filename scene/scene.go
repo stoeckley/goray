@@ -55,9 +55,9 @@ func (s *Scene) calc(x, y int, eye objects.Point, objs []objects.Object) color.C
 		k   float64     = -1
 		col color.Color = color.Black
 		v               = objects.Vector{
-			X: 100,
-			Y: float64(s.Width/2 - x),
-			Z: float64(s.Height/2 - y),
+			X: float64(1000 - eye.X),
+			Y: float64(s.Width/2 - x - eye.Y),
+			Z: float64(s.Height/2 - y - eye.Z),
 		}
 	)
 	for _, obj := range objs {
@@ -73,13 +73,18 @@ func (s *Scene) calc(x, y int, eye objects.Point, objs []objects.Object) color.C
 
 // Compute process the Scene with the given Camera (Eye)
 // and the given Object list.
-func (s *Scene) Compute(eye objects.Point, objs []objects.Object) {
+func (s *Scene) Compute(eye objects.Point, objs []objects.Object, interrupt chan struct{}) {
 	var (
 		x int
 		y int
 	)
 
 	for i, total := 0, s.Width*s.Height; i < total; i++ {
+		select {
+		case <-interrupt:
+			return
+		default:
+		}
 		x = i % s.Width
 		y = i / s.Width
 		if s.Verbose && x == 0 && y%10 == 0 {
@@ -91,3 +96,12 @@ func (s *Scene) Compute(eye objects.Point, objs []objects.Object) {
 		fmt.Printf("\rProcessing: 100%%\n")
 	}
 }
+
+/*
+in->v[X] = 1000 - master->eye->position[X];
+  in->v[Y] = (master->settings->size_img[WIDTH] / 2) - tmp->x
+    - master->eye->position[Y];
+  in->v[Z] = (master->settings->size_img[HEIGHT] / 2) - tmp->y
+    - master->eye->position[Z];
+
+*/

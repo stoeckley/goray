@@ -17,7 +17,7 @@ type Plan struct {
 }
 
 // NewPlan instanciate the Plan object.
-func NewPlan(obj objects.ObjectConfig) (objects.Object, error) {
+func NewPlan(obj objects.Config) (objects.Object, error) {
 	return (&Plan{}).Parse(obj)
 }
 
@@ -28,7 +28,7 @@ func (p *Plan) Color() color.Color {
 
 // Parse populates the Plan's values from the given configuration object.
 // If the plan is nil, instanciate it.
-func (p *Plan) Parse(obj objects.ObjectConfig) (objects.Object, error) {
+func (p *Plan) Parse(obj objects.Config) (objects.Object, error) {
 	if p == nil {
 		p = &Plan{}
 	}

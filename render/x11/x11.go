@@ -12,6 +12,7 @@ import (
 	"github.com/creack/goray/render"
 	"github.com/creack/goray/scene"
 	"github.com/creack/goray/utils"
+	"github.com/kr/pretty"
 )
 
 // Renderer represent the X11 renderer.
@@ -32,8 +33,9 @@ func (r *Renderer) Render(s *scene.Scene, eye scene.Eye, objs []objects.Object) 
 	if err != nil {
 		return err
 	}
+	c := make(chan struct{}, 100)
 	fct := func() {
-		s.Compute(eye.Position, objs)
+		s.Compute(eye.Position, objs, c)
 		draw.Draw(w.Screen(), w.Screen().Bounds(), s.Img, image.ZP, draw.Src)
 		w.FlushImage()
 	}
@@ -56,8 +58,11 @@ func (r *Renderer) Render(s *scene.Scene, eye scene.Eye, objs []objects.Object) 
 				eye.Position.Z += 10
 			case "z":
 				eye.Position.Z -= 10
+			default:
+				continue
 			}
-			fct()
+			pretty.Printf("% #v\n", eye.Position)
+			go fct()
 		}
 	}
 	return nil

@@ -3,10 +3,11 @@ package objects
 import (
 	"fmt"
 	"image/color"
+	"math"
 )
 
 // ObjectConfig represent an object configuraton.
-type ObjectConfig struct {
+type Config struct {
 	Type     string
 	Position Point
 	Rotation Vector
@@ -22,7 +23,7 @@ func RegisterObject(name string, f NewObjectFct) {
 }
 
 // NewObjectFct is a typedef on an Object constructor.
-type NewObjectFct func(ObjectConfig) (Object, error)
+type NewObjectFct func(Config) (Object, error)
 
 // ObjectList hold the available objects
 // (registered by underlying implementation)
@@ -60,6 +61,28 @@ type Vector struct {
 	Z float64
 }
 
+// RotateX .
+func (v *Vector) RotateX(angle float64) {
+	sy, sz := v.Y, v.Z
+	v.Y = math.Cos(angle)*sy - math.Sin(angle)*sz
+	v.Z = math.Sin(angle)*sy + math.Cos(angle)*sz
+}
+
+// RotateY .
+func (v *Vector) RotateY(angle float64) {
+	sx, sz := v.X, v.Z
+	v.X = math.Cos(angle)*sx + math.Sin(angle)*sz
+	v.Z = -math.Sin(angle)*sx + math.Cos(angle)*sz
+}
+
+// RotateZ .
+func (v *Vector) RotateZ(angle float64) {
+	sx, sy := v.X, v.Y
+	v.X = math.Cos(angle)*sx - math.Sin(angle)*sy
+	v.Y = math.Sin(angle)*sx + math.Cos(angle)*sy
+}
+
+// String .
 func (v Vector) String() string {
 	return fmt.Sprintf("{%f, %f, %f}", v.X, v.Y, v.Z)
 }
@@ -68,5 +91,5 @@ func (v Vector) String() string {
 type Object interface {
 	Color() color.Color
 	Intersect(v Vector, eye Point) float64
-	Parse(values ObjectConfig) (Object, error)
+	Parse(values Config) (Object, error)
 }

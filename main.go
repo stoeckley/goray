@@ -22,10 +22,12 @@ func main() {
 		log.Fatalf("parse: %s", err)
 	}
 
+
+
 	// Process the image
 	rtrace := scene.NewScene(sceneConf.Width, sceneConf.Height)
 	rtrace.Verbose = cliConf.Verbose
-	rtrace.Compute(sceneConf.Eye.Position, sceneConf.Objects)
+	rtrace.Compute(sceneConf.Eye.Position, sceneConf.Objects, nil)
 
 	// Render the image
 	if err := cliConf.Renderer.Renderer.Render(rtrace, sceneConf.Eye, sceneConf.Objects); err != nil {

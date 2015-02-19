@@ -15,7 +15,7 @@ import (
 // Set defaults.
 const (
 	DefaultParser   = "yaml"
-	DefaultRenderer = "x11"
+	DefaultRenderer = "jpeg"
 )
 
 // Config represent the RT configuration variables

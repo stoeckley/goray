@@ -116,7 +116,7 @@ func Delta(a, b, c float64) float64 {
 func SecondDegree(a, b, c float64) float64 {
 	delta := Delta(a, b, c)
 	// delta negative: no solution
-	if delta < 0 {
+	if delta < 0.00000000001 {
 		return 0
 	}
 	// Two solution: (-b + sqrt(delta)) / 2a and (-b - sqrl(delta)) / 2a
