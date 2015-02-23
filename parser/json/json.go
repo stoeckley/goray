@@ -77,6 +77,11 @@ func (p *Parser) Parse(filename string) (*scene.Config, error) {
 			Y: conf.Eye.Position.Y,
 			Z: conf.Eye.Position.Z,
 		},
+		Rotation: objects.Vector{
+			X: conf.Eye.Rotation.X,
+			Y: conf.Eye.Rotation.Y,
+			Z: conf.Eye.Rotation.Z,
+		},
 	}
 	objs := []objects.Object{}
 	for _, obj := range conf.Objects {

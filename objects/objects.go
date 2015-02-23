@@ -3,6 +3,7 @@ package objects
 import (
 	"fmt"
 	"image/color"
+	"math"
 )
 
 // ObjectConfig represent an object configuraton.
@@ -60,7 +61,28 @@ type Vector struct {
 	Z float64
 }
 
-// String .
+// RotateX apply the X axis rotation on the current vector.
+func (v *Vector) RotateX(angle float64) {
+	sy, sz := v.Y, v.Z
+	v.Y = math.Cos(angle)*sy - math.Sin(angle)*sz
+	v.Z = math.Sin(angle)*sy + math.Cos(angle)*sz
+}
+
+// RotateY apply the Y axis rotation on the current vector.
+func (v *Vector) RotateY(angle float64) {
+	sx, sz := v.X, v.Z
+	v.X = math.Cos(angle)*sx + math.Sin(angle)*sz
+	v.Z = -math.Sin(angle)*sx + math.Cos(angle)*sz
+}
+
+// RotateZ apply the Z axis rotation on the current vector.
+func (v *Vector) RotateZ(angle float64) {
+	sx, sy := v.X, v.Y
+	v.X = math.Cos(angle)*sx - math.Sin(angle)*sy
+	v.Y = math.Sin(angle)*sx + math.Cos(angle)*sy
+}
+
+// String is used to output the vector's value as a string.
 func (v Vector) String() string {
 	return fmt.Sprintf("{%f, %f, %f}", v.X, v.Y, v.Z)
 }

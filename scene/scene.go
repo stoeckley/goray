@@ -24,6 +24,7 @@ type Scene struct {
 // It is a point with a vector.
 type Eye struct {
 	Position objects.Point
+	Rotation objects.Vector
 }
 
 // Config represent the configuration for a Scene.
