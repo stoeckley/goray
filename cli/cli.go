@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/creack/goray/objects"
 	"github.com/creack/goray/parser"
@@ -20,10 +21,11 @@ const (
 
 // Config represent the RT configuration variables
 type Config struct {
-	Renderer  RendererCLI
-	Parser    ParserCLI
-	SceneFile string
-	Verbose   bool
+	Renderer      RendererCLI
+	Parser        ParserCLI
+	SceneFile     string
+	Verbose       bool
+	MaxGoRoutines int
 }
 
 // Flags handle CLIs flags
@@ -42,6 +44,7 @@ func Flags() (*Config, error) {
 	flag.Var(&conf.Parser, "parser", "Parser to use.")
 	flag.StringVar(&conf.SceneFile, "scene", "", "Scene file to render")
 	flag.BoolVar(&conf.Verbose, "v", false, "Verbose")
+	flag.IntVar(&conf.MaxGoRoutines, "g", runtime.NumCPU(), "Maximum number of goroutines to run in parallel")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "\nUsage: %s -scene=scene_file\n", os.Args[0])

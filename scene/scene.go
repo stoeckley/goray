@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"time"
 
 	"github.com/creack/goray/objects"
 	// Load all Object modules
@@ -14,10 +15,12 @@ import (
 // Hold the bondaries as well as the processed image buffer.
 // Also holds various extra metadata.
 type Scene struct {
-	Img     *image.RGBA
-	Width   int
-	Height  int
-	Verbose bool
+	Img    *image.RGBA
+	Width  int
+	Height int
+
+	MaxGoRoutines int
+	Verbose       bool
 }
 
 // Eye represent the scene's Camera
@@ -37,11 +40,12 @@ type Config struct {
 }
 
 // NewScene instantiates a new Scene.
-func NewScene(w, h int) *Scene {
+func NewScene(w, h int, maxGoRoutines int) *Scene {
 	return &Scene{
-		Img:    image.NewRGBA(image.Rect(0, 0, w, h)),
-		Width:  w,
-		Height: h,
+		Img:           image.NewRGBA(image.Rect(0, 0, w, h)),
+		Width:         w,
+		Height:        h,
+		MaxGoRoutines: maxGoRoutines,
 	}
 }
 
@@ -74,18 +78,31 @@ func (s *Scene) calc(x, y int, eye objects.Point, objs []objects.Object) color.C
 // Compute process the Scene with the given Camera (Eye)
 // and the given Object list.
 func (s *Scene) Compute(eye objects.Point, objs []objects.Object) {
-	var (
-		x int
-		y int
-	)
-	for i, total := 0, s.Width*s.Height; i < total; i++ {
-		x = i % s.Width
-		y = i / s.Width
-		if s.Verbose && x == 0 && y%10 == 0 {
-			fmt.Printf("\rProcessing: %d%%", int((float64(y)/float64(s.Height))*100+1))
-		}
-		s.Img.Set(x, y, s.calc(x, y, eye, objs))
+	if true || s.Verbose {
+		start := time.Now().UTC()
+		defer func() { fmt.Printf("compute time: %s\n", time.Now().UTC().Sub(start)) }()
 	}
+	sem := make(chan struct{}, s.MaxGoRoutines)
+	for i := 0; i < s.MaxGoRoutines; i++ {
+		sem <- struct{}{}
+	}
+	for x := 0; x < s.Width; x++ {
+		<-sem
+		go func(x int) {
+			for y := 0; y < s.Height; y++ {
+				if s.Verbose && x == 0 && y%10 == 0 {
+					fmt.Printf("\rProcessing: %d%%", int((float64(y)/float64(s.Height))*100+1))
+				}
+				s.Img.Set(x, y, s.calc(x, y, eye, objs))
+			}
+			sem <- struct{}{}
+		}(x)
+	}
+	// Make sure all routines are finished
+	for i := 0; i < s.MaxGoRoutines; i++ {
+		<-sem
+	}
+	close(sem)
 	if s.Verbose {
 		fmt.Printf("\rProcessing: 100%%\n")
 	}

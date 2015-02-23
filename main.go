@@ -23,7 +23,7 @@ func main() {
 	}
 
 	// Process the image
-	rtrace := scene.NewScene(sceneConf.Width, sceneConf.Height)
+	rtrace := scene.NewScene(sceneConf.Width, sceneConf.Height, cliConf.MaxGoRoutines)
 	rtrace.Verbose = cliConf.Verbose
 	rtrace.Compute(sceneConf.Eye.Position, sceneConf.Objects)
 
