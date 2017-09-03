@@ -34,7 +34,7 @@ func (r *Renderer) Render(s *scene.Scene, eye scene.Eye, objs []objects.Object) 
 		return err
 	}
 	fct := func() {
-		s.Compute(eye.Position, objs)
+		s.Compute(eye, objs)
 		draw.Draw(w.Screen(), w.Screen().Bounds(), s.Img, image.ZP, draw.Src)
 		w.FlushImage()
 	}

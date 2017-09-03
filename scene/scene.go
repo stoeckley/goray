@@ -54,30 +54,36 @@ func NewScene(w, h int, maxGoRoutines int) *Scene {
 // To find the color, we first need to find the closest object
 // to the eye crossing the line Point / Eye, then fetch the Color
 // of the found object.
-func (s *Scene) calc(x, y int, eye objects.Point, objs []objects.Object) color.Color {
+func (s *Scene) calc(x, y int, eye Eye, objs []objects.Object) color.Color {
 	var (
 		k   float64     = -1
 		col color.Color = color.Black
 		v               = objects.Vector{
-			X: float64(1000 - eye.X),
-			Y: float64(s.Width/2 - x - eye.Y),
-			Z: float64(s.Height/2 - y - eye.Z),
+			X: float64(1000 - eye.Position.X),
+			Y: float64(s.Width/2 - x - eye.Position.Y),
+			Z: float64(s.Height/2 - y - eye.Position.Z),
 		}
 	)
 	for _, obj := range objs {
+		v.RotateX(eye.Rotation.X)
+		v.RotateY(eye.Rotation.X)
+		v.RotateZ(eye.Rotation.X)
 		// If k == -1, it is our first pass, so if we have a solution, keep it.
 		// After that, we check that the solution is smaller than the one we have.
-		if tmp := obj.Intersect(v, eye); tmp > 0 && (k == -1 || tmp < k) {
+		if tmp := obj.Intersect(v, eye.Position); tmp > 0 && (k == -1 || tmp < k) {
 			k = tmp
 			col = obj.Color()
 		}
+		v.RotateX(-eye.Rotation.X)
+		v.RotateY(-eye.Rotation.X)
+		v.RotateZ(-eye.Rotation.X)
 	}
 	return col
 }
 
 // Compute process the Scene with the given Camera (Eye)
 // and the given Object list.
-func (s *Scene) Compute(eye objects.Point, objs []objects.Object) {
+func (s *Scene) Compute(eye Eye, objs []objects.Object) {
 	if true || s.Verbose {
 		start := time.Now().UTC()
 		defer func() { fmt.Printf("compute time: %s\n", time.Now().UTC().Sub(start)) }()
